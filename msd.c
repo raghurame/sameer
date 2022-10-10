@@ -147,18 +147,33 @@ float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF
 {
 	float distance;
 	int delT;
+	int msdDenominator = 0;
+
+	// Initializing the values to zero
+	for (int i = 0; i < nTimeframes; ++i)
+	{
+		for (int j = 0; j < nChains; ++j)
+		{
+			meanSquareDisplacement[i][j] = 0;
+		}
+	}
 
 	for (int currentChain = 0; currentChain < nChains; ++currentChain)
 	{
+		msdDenominator = 0;
+
 		for (int initTime = 0; initTime < nTimeframes; ++initTime)
 		{
 			for (int finalTime = initTime; finalTime < nTimeframes; ++finalTime)
 			{
-				distance = calculateDistance (chainCOMs[initTime][currentChain].x, chainCOMs[initTime][currentChain].y, chainCOMs[initTime][currentChain].z, chainCOMs[finalTime][currentChain].x, chainCOMs[finalTime][currentChain].y, chainCOMs[finalTime][currentChain].z);				
+				distance = calculateDistance (chainCOMs[initTime][currentChain].x, chainCOMs[initTime][currentChain].y, chainCOMs[initTime][currentChain].z, chainCOMs[finalTime][currentChain].x, chainCOMs[finalTime][currentChain].y, chainCOMs[finalTime][currentChain].z);
 				delT = finalTime - initTime;
-				meanSquareDisplacement[delT][currentChain] = pow (distance, 2);
+				meanSquareDisplacement[delT][currentChain] += pow (distance, 2);
+				msdDenominator++;
 			}
 		}
+
+		meanSquareDisplacement[delT][currentChain] /= msdDenominator;
 	}
 
 	return meanSquareDisplacement;
@@ -182,6 +197,24 @@ float *avgMSD (float **meanSquareDisplacement, float *meanSquareDisplacement_avg
 		meanSquareDisplacement_avg[i] /= nChains;
 	}
 	return meanSquareDisplacement_avg;
+}
+
+void printMSD (float *meanSquareDisplacement_avg, int nTimeframes, const char *inputFilename)
+{
+	char *outputFilename;
+	outputFilename = (char *) malloc (100 * sizeof (char));
+	snprintf (outputFilename, 100, "%s.msd", inputFilename);
+
+	FILE *output;
+	output = fopen (outputFilename, "w");
+
+	for (int i = 0; i < nTimeframes; ++i)
+	{
+		fprintf(output, "%d %f\n", i, meanSquareDisplacement_avg[i]);
+	}
+
+	fclose (output);
+	free (outputFilename);
 }
 
 int main(int argc, char const *argv[])
@@ -219,13 +252,11 @@ int main(int argc, char const *argv[])
 
 	meanSquareDisplacement_avg = avgMSD (meanSquareDisplacement, meanSquareDisplacement_avg, nTimeframes, nChains);
 
-	// Testing
-	for (int i = 0; i < nTimeframes; ++i)
-	{
-		printf("%d %f\n", i, meanSquareDisplacement_avg[i]);
-		usleep (100000);
-	}
+	printMSD (meanSquareDisplacement_avg, nTimeframes, argv[1]);
 
+	free (chainCOMs);
+	free (meanSquareDisplacement);
+	free (meanSquareDisplacement_avg);
 	fclose (input);
 	return 0;
 }
