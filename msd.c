@@ -147,7 +147,8 @@ float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF
 {
 	float distance;
 	int delT;
-	int msdDenominator = 0;
+	int *msdDenominator;
+	msdDenominator = (int *) calloc (nTimeframes, sizeof (int));
 
 	// Initializing the values to zero
 	for (int i = 0; i < nTimeframes; ++i)
@@ -160,8 +161,6 @@ float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF
 
 	for (int currentChain = 0; currentChain < nChains; ++currentChain)
 	{
-		msdDenominator = 0;
-
 		for (int initTime = 0; initTime < nTimeframes; ++initTime)
 		{
 			for (int finalTime = initTime; finalTime < nTimeframes; ++finalTime)
@@ -169,11 +168,17 @@ float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF
 				distance = calculateDistance (chainCOMs[initTime][currentChain].x, chainCOMs[initTime][currentChain].y, chainCOMs[initTime][currentChain].z, chainCOMs[finalTime][currentChain].x, chainCOMs[finalTime][currentChain].y, chainCOMs[finalTime][currentChain].z);
 				delT = finalTime - initTime;
 				meanSquareDisplacement[delT][currentChain] += pow (distance, 2);
-				msdDenominator++;
+				msdDenominator[delT]++;
 			}
 		}
+	}
 
-		meanSquareDisplacement[delT][currentChain] /= msdDenominator;
+	for (int i = 0; i < nChains; ++i)
+	{
+		for (int j = 0; j < nTimeframes; ++j)
+		{
+			meanSquareDisplacement[j][i] /= msdDenominator[j];
+		}
 	}
 
 	return meanSquareDisplacement;
