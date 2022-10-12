@@ -147,20 +147,25 @@ float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF
 {
 	float distance;
 	int delT;
-	int *msdDenominator;
-	msdDenominator = (int *) calloc (nTimeframes, sizeof (int));
+	int **msdDenominator;
+	msdDenominator = (int **) malloc (nTimeframes * sizeof (int *));
+
+	for (int i = 0; i < nTimeframes; ++i) {
+		msdDenominator[i] = (int *) malloc (nChains * sizeof (int)); }
 
 	// Initializing the values to zero
-	for (int i = 0; i < nTimeframes; ++i)
-	{
-		for (int j = 0; j < nChains; ++j)
-		{
-			meanSquareDisplacement[i][j] = 0;
-		}
-	}
+	for (int i = 0; i < nTimeframes; ++i) {
+		for (int j = 0; j < nChains; ++j) {
+			msdDenominator[i][j] = 0; } }
+
+	for (int i = 0; i < nTimeframes; ++i) {
+		for (int j = 0; j < nChains; ++j) {
+			meanSquareDisplacement[i][j] = 0; } }
 
 	for (int currentChain = 0; currentChain < nChains; ++currentChain)
 	{
+		printf("Calculating for chain %d...                              \r", currentChain);
+		fflush (stdout);
 		for (int initTime = 0; initTime < nTimeframes; ++initTime)
 		{
 			for (int finalTime = initTime; finalTime < nTimeframes; ++finalTime)
@@ -168,16 +173,17 @@ float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF
 				distance = calculateDistance (chainCOMs[initTime][currentChain].x, chainCOMs[initTime][currentChain].y, chainCOMs[initTime][currentChain].z, chainCOMs[finalTime][currentChain].x, chainCOMs[finalTime][currentChain].y, chainCOMs[finalTime][currentChain].z);
 				delT = finalTime - initTime;
 				meanSquareDisplacement[delT][currentChain] += pow (distance, 2);
-				msdDenominator[delT]++;
+				msdDenominator[delT][currentChain]++;
 			}
 		}
 	}
+	printf("\n");
 
 	for (int i = 0; i < nChains; ++i)
 	{
 		for (int j = 0; j < nTimeframes; ++j)
 		{
-			meanSquareDisplacement[j][i] /= msdDenominator[j];
+			meanSquareDisplacement[j][i] /= msdDenominator[j][i];
 		}
 	}
 
