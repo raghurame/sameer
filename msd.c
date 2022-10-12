@@ -134,18 +134,16 @@ CENTER_OF_MASS **computeCenterOfMass (CENTER_OF_MASS **chainCOMs, FILE *input, i
 	return chainCOMs;
 }
 
-float calculateDistance (float x1, float y1, float z1, float x2, float y2, float z2)
+float calculateDisplacement (float x1, float y1, float z1, float x2, float y2, float z2)
 {
-	float distance;
-
-	distance = sqrt (pow ((x2 - x1), 2) + pow ((y2 - y1), 2) + pow ((z2 - z1), 2));
-
-	return distance;
+	float displacement;
+	displacement = sqrt (pow (x2, 2) + pow (y2, 2) + pow (z2, 2)) - sqrt (pow (x1, 2) + pow (y1, 2) + pow (z1, 2));
+	return displacement;
 }
 
 float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF_MASS **chainCOMs, int nTimeframes, int nChains)
 {
-	float distance;
+	float displacement;
 	int delT;
 	int **msdDenominator;
 	msdDenominator = (int **) malloc (nTimeframes * sizeof (int *));
@@ -170,9 +168,9 @@ float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF
 		{
 			for (int finalTime = initTime; finalTime < nTimeframes; ++finalTime)
 			{
-				distance = calculateDistance (chainCOMs[initTime][currentChain].x, chainCOMs[initTime][currentChain].y, chainCOMs[initTime][currentChain].z, chainCOMs[finalTime][currentChain].x, chainCOMs[finalTime][currentChain].y, chainCOMs[finalTime][currentChain].z);
+				displacement = calculateDisplacement (chainCOMs[initTime][currentChain].x, chainCOMs[initTime][currentChain].y, chainCOMs[initTime][currentChain].z, chainCOMs[finalTime][currentChain].x, chainCOMs[finalTime][currentChain].y, chainCOMs[finalTime][currentChain].z);
 				delT = finalTime - initTime;
-				meanSquareDisplacement[delT][currentChain] += pow (distance, 2);
+				meanSquareDisplacement[delT][currentChain] += pow (displacement, 2);
 				msdDenominator[delT][currentChain]++;
 			}
 		}
