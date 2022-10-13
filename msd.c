@@ -140,7 +140,6 @@ float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF
 	for (int i = 0; i < nTimeframes; ++i) {
 		msdDenominator[i] = (int *) malloc (nChains * sizeof (int)); }
 
-	// Initializing the values to zero
 	for (int i = 0; i < nTimeframes; ++i) {
 		for (int j = 0; j < nChains; ++j) {
 			msdDenominator[i][j] = 0; } }
