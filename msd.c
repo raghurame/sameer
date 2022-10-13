@@ -146,6 +146,7 @@ float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF
 	float displacement;
 	int delT;
 	int **msdDenominator;
+	int progress = 0, progressCheckFreq = (int) ceil (nChains * nTimeframes * 0.01);
 	msdDenominator = (int **) malloc (nTimeframes * sizeof (int *));
 
 	for (int i = 0; i < nTimeframes; ++i) {
@@ -160,10 +161,10 @@ float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF
 		for (int j = 0; j < nChains; ++j) {
 			meanSquareDisplacement[i][j] = 0; } }
 
+	printf("Computing mean square displacement...\n");
+
 	for (int currentChain = 0; currentChain < nChains; ++currentChain)
 	{
-		printf("Calculating for chain %d...                              \r", currentChain);
-		fflush (stdout);
 		for (int initTime = 0; initTime < nTimeframes; ++initTime)
 		{
 			for (int finalTime = initTime; finalTime < nTimeframes; ++finalTime)
@@ -173,9 +174,14 @@ float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF
 				meanSquareDisplacement[delT][currentChain] += pow (displacement, 2);
 				msdDenominator[delT][currentChain]++;
 			}
+
+			progress++;
+			if ((progress % progressCheckFreq) == 0) {
+				printf("%.0f%% completed               \r", (float) (progress * 100) /(nChains * nTimeframes));
+				fflush (stdout); }
 		}
 	}
-	printf("\n");
+	printf("100%% completed...                    \n");
 
 	for (int i = 0; i < nChains; ++i)
 	{
