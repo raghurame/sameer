@@ -5,18 +5,6 @@
 #include <unistd.h>
 #include <time.h>
 
-/*
-
-ARGUMENTS TO PASS:
-~~~~~~~~~~~~~~~~~
-
-argv[0] = program
-argv[1] = input dump file name
-argv[2] = degree of polymerization
-argv[3] = number of chains
-
-*/
-
 typedef struct chainEnds
 {
 	float x1, y1, z1, x2, y2, z2;
