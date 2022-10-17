@@ -87,7 +87,7 @@ CENTER_OF_MASS **computeCenterOfMass (CENTER_OF_MASS **chainCOMs, FILE *input, i
 			sscanf (lineString, "%*d %*d %*f %*f %*f %f %f %f\n", &chainCoordinates[currentLine - 10].x, &chainCoordinates[currentLine - 10].y, &chainCoordinates[currentLine - 10].z);
 		}
 
-		if (currentLine == (nAtoms + 10))
+		if (currentLine == (nAtoms + 9))
 		{
 			currentArrayCounter = 0;
 
