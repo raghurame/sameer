@@ -124,8 +124,11 @@ CENTER_OF_MASS **computeCenterOfMass (CENTER_OF_MASS **chainCOMs, FILE *input, i
 
 float calculateDisplacement (float x1, float y1, float z1, float x2, float y2, float z2)
 {
-	float displacement;
-	displacement = sqrt (pow (x2, 2) + pow (y2, 2) + pow (z2, 2)) - sqrt (pow (x1, 2) + pow (y1, 2) + pow (z1, 2));
+	float displacement, dx, dy, dz;
+	dx = x2 - x1;
+	dy = y2 - y1;
+	dz = z2 - z1;
+	displacement = dx * dx + dy * dy + dz * dz; 
 	return displacement;
 }
 
@@ -205,7 +208,7 @@ void printMSD (float *meanSquareDisplacement_avg, int nTimeframes, const char *i
 {
 	char *outputFilename;
 	outputFilename = (char *) malloc (100 * sizeof (char));
-	snprintf (outputFilename, 100, "%s.msd", inputFilename);
+	snprintf (outputFilename, 100, "%s_2.msd", inputFilename);
 
 	FILE *output;
 	output = fopen (outputFilename, "w");
