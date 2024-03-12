@@ -161,7 +161,7 @@ float **computeMeanSquareDisplacement (float **meanSquareDisplacement, CENTER_OF
 			{
 				displacement = calculateDisplacement (chainCOMs[initTime][currentChain].x, chainCOMs[initTime][currentChain].y, chainCOMs[initTime][currentChain].z, chainCOMs[finalTime][currentChain].x, chainCOMs[finalTime][currentChain].y, chainCOMs[finalTime][currentChain].z);
 				delT = finalTime - initTime;
-				meanSquareDisplacement[delT][currentChain] += pow (displacement, 2);
+				meanSquareDisplacement[delT][currentChain] += displacement;
 				msdDenominator[delT][currentChain]++;
 			}
 
